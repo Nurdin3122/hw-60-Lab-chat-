@@ -1,7 +1,11 @@
 import "./MsgForm.css"
-import {FormEvent, useState} from "react";
+import React, {FormEvent, useState} from "react";
 
-const MsgForm = () => {
+interface Props {
+    onSend: () => void;
+}
+
+const MsgForm:React.FC<Props> = ({onSend}) => {
     const [author, setAuthor] = useState("");
     const [message, setMessage] = useState("");
 
@@ -12,11 +16,11 @@ const MsgForm = () => {
         const data = new URLSearchParams();
         data.set('message', message);
         data.set('author', author);
+        onSend();
 
         await fetch(url, {
             method: 'post',
             body: data,
-
         });
     }
 
@@ -39,7 +43,7 @@ const MsgForm = () => {
                     className="input"
                     placeholder="message"
                     />
-                    <button type="submit">Send</button>
+                    <button className="btn" type="submit">Send</button>
                 </form>
             </div>
         </div>

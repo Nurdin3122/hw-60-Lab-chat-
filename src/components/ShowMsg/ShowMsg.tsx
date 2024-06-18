@@ -3,12 +3,14 @@ import "./block-message.css";
 interface Props {
     author:string;
     message:string;
+    dataTime:string;
 }
 
-const ShowMsg:React.FC<Props> = ({author,message}) => {
+const ShowMsg:React.FC<Props> = ({author,message,dataTime}) => {
     return (
         <div className="block-message">
-            <span>Author:{author} </span> <span> Message:{message}</span>
+            <p>Author: {author} </p> <p> Message: {message}</p>
+            <p>data-time:{dataTime}</p>
         </div>
     );
 };

@@ -6,37 +6,48 @@ import {Messages} from "./type";
 import ShowMsg from "./components/ShowMsg/ShowMsg";
 
 const App = () => {
-    const url = 'http://146.185.154.90:8000/messages';
     const [messages, setMessages] = useState<Messages[]>([]);
+    const [timeMsg, setTimeMsg] = useState<string>("");
+
+    const getMessages = async (time = "") => {
+        const response = await fetch(`http://146.185.154.90:8000/messages${time ? `?datetime=${time}` : ''}`);
+        if (response.ok) {
+            const posts = await response.json();
+            setMessages(posts)
+            setTimeMsg(posts[0].datetime);
+        } else {
+            console.error("Ошибка",response.status);
+        }
+    };
+
 
     useEffect(() => {
-        const getMessages = async () => {
-                const response = await fetch(url);
-                if (response.ok) {
-                    const posts = await response.json();
-                    setMessages(posts)
-                } else {
-                    console.error(response.status);
-                }
-        };
-        void  getMessages();
-    }, []);
+      getMessages();
+        const interval = setInterval(() => getMessages(timeMsg),3000)
+        return () => clearInterval(interval);
+    }, [timeMsg]);
+
+
+    const sendMessage = () => {
+        getMessages();
+        const interval = setInterval(() => getMessages(timeMsg), 3000);
+        return () => clearInterval(interval);
+    }
 
   return (
     <>
-      <MsgForm></MsgForm>
-        <div>
+        <MsgForm onSend={sendMessage}></MsgForm>
+        <div className="block-Msg">
             {
             messages.map(message => (
                 <ShowMsg
                     author={message.author}
                     message={message.message}
                     key={message._id}
+                    dataTime={message.datetime}
                 />))
         }
         </div>
-
-
     </>
   )
 };
